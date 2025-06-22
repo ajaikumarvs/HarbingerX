@@ -1,8 +1,13 @@
 package ai
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	"time"
 
 	"github.com/google/generative-ai-go/genai"
 	"github.com/sashabaranov/go-openai"
@@ -30,6 +35,35 @@ type OpenAIProvider struct {
 
 type GeminiProvider struct {
 	client *genai.Client
+	apiKey string
+}
+
+type CustomProvider struct {
+	name     string
+	endpoint string
+	apiKey   string
+	headers  map[string]string
+}
+
+// Gemini API structures for direct REST API calls
+type GeminiRequest struct {
+	Contents []GeminiContent `json:"contents"`
+}
+
+type GeminiContent struct {
+	Parts []GeminiPart `json:"parts"`
+}
+
+type GeminiPart struct {
+	Text string `json:"text"`
+}
+
+type GeminiResponse struct {
+	Candidates []GeminiCandidate `json:"candidates"`
+}
+
+type GeminiCandidate struct {
+	Content GeminiContent `json:"content"`
 }
 
 func NewService(config ConfigManager) *Service {
@@ -43,9 +77,12 @@ func (s *Service) TestAPIKey(provider, key string) bool {
 	case "openai":
 		return s.testOpenAIKey(key)
 	case "gemini":
-		return s.testGeminiKey(key)
+		return s.testGeminiKeyDirect(key)
+	case "claude":
+		return s.testClaudeKey(key)
 	default:
-		return false
+		// For custom providers, we'll test them later
+		return s.testCustomAPIKey(provider, key)
 	}
 }
 
@@ -74,9 +111,11 @@ func (s *Service) generateWithProvider(provider, key string, scanResult map[stri
 	case "openai":
 		return s.generateWithOpenAI(key, scanResult, reportType)
 	case "gemini":
-		return s.generateWithGemini(key, scanResult, reportType)
+		return s.generateWithGeminiDirect(key, scanResult, reportType)
+	case "claude":
+		return s.generateWithClaude(key, scanResult, reportType)
 	default:
-		return nil, fmt.Errorf("unsupported provider: %s", provider)
+		return s.generateWithCustomProvider(provider, key, scanResult, reportType)
 	}
 }
 
@@ -112,6 +151,69 @@ func (s *Service) generateWithOpenAI(key string, scanResult map[string]interface
 	return s.parseAIResponse(resp.Choices[0].Message.Content), nil
 }
 
+// New direct Gemini API implementation using REST API
+func (s *Service) generateWithGeminiDirect(key string, scanResult map[string]interface{}, reportType string) (map[string]interface{}, error) {
+	prompt := s.buildPrompt(scanResult, reportType)
+
+	requestBody := GeminiRequest{
+		Contents: []GeminiContent{
+			{
+				Parts: []GeminiPart{
+					{
+						Text: prompt,
+					},
+				},
+			},
+		},
+	}
+
+	jsonData, err := json.Marshal(requestBody)
+	if err != nil {
+		return nil, err
+	}
+
+	url := fmt.Sprintf("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=%s", key)
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{Timeout: 30 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("Gemini API error: %s", string(body))
+	}
+
+	var geminiResp GeminiResponse
+	err = json.Unmarshal(body, &geminiResp)
+	if err != nil {
+		return nil, err
+	}
+
+	var content string
+	if len(geminiResp.Candidates) > 0 && len(geminiResp.Candidates[0].Content.Parts) > 0 {
+		content = geminiResp.Candidates[0].Content.Parts[0].Text
+	}
+
+	// Update usage
+	s.config.UpdateAPIKeyUsage("gemini", 1, 0, 0.0)
+
+	return s.parseAIResponse(content), nil
+}
+
+// Legacy Gemini implementation (keeping for compatibility)
 func (s *Service) generateWithGemini(key string, scanResult map[string]interface{}, reportType string) (map[string]interface{}, error) {
 	ctx := context.Background()
 	client, err := genai.NewClient(ctx, option.WithAPIKey(key))
@@ -137,6 +239,20 @@ func (s *Service) generateWithGemini(key string, scanResult map[string]interface
 	}
 
 	return s.parseAIResponse(content), nil
+}
+
+func (s *Service) generateWithClaude(key string, scanResult map[string]interface{}, reportType string) (map[string]interface{}, error) {
+	// Claude API implementation placeholder
+	return map[string]interface{}{
+		"error": "Claude integration not yet implemented",
+	}, nil
+}
+
+func (s *Service) generateWithCustomProvider(provider, key string, scanResult map[string]interface{}, reportType string) (map[string]interface{}, error) {
+	// Custom provider implementation placeholder
+	return map[string]interface{}{
+		"error": "Custom provider integration not yet implemented",
+	}, nil
 }
 
 func (s *Service) buildPrompt(scanResult map[string]interface{}, reportType string) string {
@@ -209,4 +325,51 @@ func (s *Service) testGeminiKey(key string) bool {
 	model := client.GenerativeModel("gemini-pro")
 	_, err = model.GenerateContent(ctx, genai.Text("Test"))
 	return err == nil
+}
+
+// New direct Gemini API testing
+func (s *Service) testGeminiKeyDirect(key string) bool {
+	requestBody := GeminiRequest{
+		Contents: []GeminiContent{
+			{
+				Parts: []GeminiPart{
+					{
+						Text: "Hello, this is a test message. Please respond with 'OK'.",
+					},
+				},
+			},
+		},
+	}
+
+	jsonData, err := json.Marshal(requestBody)
+	if err != nil {
+		return false
+	}
+
+	url := fmt.Sprintf("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=%s", key)
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return false
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return false
+	}
+	defer resp.Body.Close()
+
+	return resp.StatusCode == 200
+}
+
+func (s *Service) testClaudeKey(key string) bool {
+	// Claude API testing placeholder
+	return false
+}
+
+func (s *Service) testCustomAPIKey(provider, key string) bool {
+	// Custom API key testing placeholder
+	return false
 }

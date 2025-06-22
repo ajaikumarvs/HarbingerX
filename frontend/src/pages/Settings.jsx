@@ -17,7 +17,10 @@ import {
   Bot,
   Sliders,
   Database,
-  RefreshCw
+  RefreshCw,
+  Plus,
+  ExternalLink,
+  Zap
 } from 'lucide-react'
 import { 
   GetAPIKeys, 
@@ -41,6 +44,14 @@ const Settings = () => {
   const [showKeys, setShowKeys] = useState({})
   const [tempApiKeys, setTempApiKeys] = useState({})
   const [tempConfig, setTempConfig] = useState({})
+  const [customProviders, setCustomProviders] = useState([])
+  const [showAddCustomProvider, setShowAddCustomProvider] = useState(false)
+  const [newCustomProvider, setNewCustomProvider] = useState({
+    name: '',
+    endpoint: '',
+    headers: {},
+    description: ''
+  })
 
   useEffect(() => {
     loadSettings()
@@ -402,6 +413,207 @@ const Settings = () => {
                         <Info className="w-3 h-3" />
                         <span>{provider.helpText}</span>
                       </p>
+                    </div>
+                  </div>
+                )
+              })}
+            </CardContent>
+          </Card>
+
+          {/* Custom AI Providers Section */}
+          <Card className="glass-card">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Zap className="w-5 h-5" />
+                  <span>Custom AI Providers</span>
+                </div>
+                <Button
+                  size="sm"
+                  onClick={() => setShowAddCustomProvider(true)}
+                  className="gap-1"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Provider
+                </Button>
+              </CardTitle>
+              <CardDescription>
+                Add custom AI API endpoints for specialized security analysis
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {showAddCustomProvider && (
+                <div className="space-y-4 p-4 border border-dashed border-primary rounded-lg">
+                  <h4 className="font-medium flex items-center space-x-2">
+                    <Plus className="w-4 h-4" />
+                    <span>Add Custom AI Provider</span>
+                  </h4>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Provider Name</label>
+                      <input
+                        type="text"
+                        value={newCustomProvider.name}
+                        onChange={(e) => setNewCustomProvider(prev => ({ ...prev, name: e.target.value }))}
+                        placeholder="e.g., My Custom AI"
+                        className="w-full px-3 py-2 rounded-lg border border-border bg-background/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">API Endpoint</label>
+                      <input
+                        type="url"
+                        value={newCustomProvider.endpoint}
+                        onChange={(e) => setNewCustomProvider(prev => ({ ...prev, endpoint: e.target.value }))}
+                        placeholder="https://api.example.com/v1/chat"
+                        className="w-full px-3 py-2 rounded-lg border border-border bg-background/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Description</label>
+                    <input
+                      type="text"
+                      value={newCustomProvider.description}
+                      onChange={(e) => setNewCustomProvider(prev => ({ ...prev, description: e.target.value }))}
+                      placeholder="Brief description of this AI provider"
+                      className="w-full px-3 py-2 rounded-lg border border-border bg-background/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        // Add custom provider logic
+                        const provider = {
+                          ...newCustomProvider,
+                          key: newCustomProvider.name.toLowerCase().replace(/\s+/g, '_'),
+                          icon: ExternalLink,
+                          color: 'bg-indigo-500'
+                        }
+                        setCustomProviders(prev => [...prev, provider])
+                        setNewCustomProvider({ name: '', endpoint: '', headers: {}, description: '' })
+                        setShowAddCustomProvider(false)
+                        toast.success('Custom provider added successfully!')
+                      }}
+                      disabled={!newCustomProvider.name || !newCustomProvider.endpoint}
+                    >
+                      <Save className="w-4 h-4 mr-1" />
+                      Add Provider
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setShowAddCustomProvider(false)
+                        setNewCustomProvider({ name: '', endpoint: '', headers: {}, description: '' })
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {customProviders.length === 0 && !showAddCustomProvider && (
+                <div className="text-center py-8 text-muted-foreground">
+                  <ExternalLink className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>No custom AI providers configured</p>
+                  <p className="text-sm">Click "Add Provider" to add a custom AI endpoint</p>
+                </div>
+              )}
+
+              {customProviders.map((provider, index) => {
+                const Icon = provider.icon
+                const isTestingKey = testingKeys[provider.key]
+                const currentKey = tempApiKeys[provider.key] || ''
+                const savedKey = apiKeys[provider.key] || ''
+                const hasChanges = currentKey !== savedKey
+                const isVisible = showKeys[provider.key]
+
+                return (
+                  <div key={provider.key} className="space-y-4 p-4 border border-border rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className={`p-2 rounded-lg ${provider.color}`}>
+                          <Icon className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold">{provider.name}</h3>
+                          <p className="text-sm text-muted-foreground">{provider.description}</p>
+                          <p className="text-xs text-muted-foreground">{provider.endpoint}</p>
+                        </div>
+                        {savedKey && (
+                          <Badge variant="outline" className="text-green-500 border-green-500/20">
+                            Configured
+                          </Badge>
+                        )}
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setCustomProviders(prev => prev.filter((_, i) => i !== index))
+                          toast.success('Custom provider removed')
+                        }}
+                        className="text-red-500 hover:text-red-600"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="relative">
+                        <input
+                          type={isVisible ? 'text' : 'password'}
+                          value={currentKey}
+                          onChange={(e) => handleApiKeyChange(provider.key, e.target.value)}
+                          placeholder="Enter API key for this provider"
+                          className="w-full px-4 py-3 pr-12 rounded-lg border border-border bg-background/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => toggleKeyVisibility(provider.key)}
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        >
+                          {isVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+
+                      {currentKey && (
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleTestAPIKey(provider.key)}
+                            disabled={isTestingKey}
+                          >
+                            {isTestingKey ? (
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            ) : (
+                              <TestTube className="w-4 h-4 mr-2" />
+                            )}
+                            Test
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={() => handleSaveApiKey(provider.key)}
+                            disabled={saving || !hasChanges}
+                          >
+                            <Save className="w-4 h-4 mr-2" />
+                            Save
+                          </Button>
+                          {hasChanges && (
+                            <Badge variant="outline" className="text-orange-500 border-orange-500/20">
+                              Unsaved changes
+                            </Badge>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )
