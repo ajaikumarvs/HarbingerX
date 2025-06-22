@@ -15,10 +15,11 @@ import (
 )
 
 type Service struct {
-	ctx         context.Context
-	storage     Storage
-	activeScans map[string]*ScanInstance
-	mutex       sync.RWMutex
+	ctx           context.Context
+	storage       Storage
+	activeScans   map[string]*ScanInstance
+	mutex         sync.RWMutex
+	disableEvents bool
 }
 
 type Storage interface {
@@ -127,9 +128,19 @@ type DNSInfo struct {
 
 func NewService(ctx context.Context, storage Storage) *Service {
 	return &Service{
-		ctx:         ctx,
-		storage:     storage,
-		activeScans: make(map[string]*ScanInstance),
+		ctx:           ctx,
+		storage:       storage,
+		activeScans:   make(map[string]*ScanInstance),
+		disableEvents: false,
+	}
+}
+
+func NewServiceWithoutEvents(ctx context.Context, storage Storage) *Service {
+	return &Service{
+		ctx:           ctx,
+		storage:       storage,
+		activeScans:   make(map[string]*ScanInstance),
+		disableEvents: true,
 	}
 }
 
@@ -440,11 +451,20 @@ func (s *Service) updateProgress(scan *ScanInstance, percentage float64, stage s
 		})
 	}
 
-	// Emit progress event
-	runtime.EventsEmit(s.ctx, "scan:progress", map[string]interface{}{
-		"scanId":   scan.ID,
-		"progress": scan.Progress,
-	})
+	// Emit progress event (only if running in Wails context)
+	if !s.disableEvents {
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					// Ignore runtime context errors when running outside Wails
+				}
+			}()
+			runtime.EventsEmit(s.ctx, "scan:progress", map[string]interface{}{
+				"scanId":   scan.ID,
+				"progress": scan.Progress,
+			})
+		}()
+	}
 }
 
 func (s *Service) parseScanConfig(config map[string]interface{}) ScanConfig {
