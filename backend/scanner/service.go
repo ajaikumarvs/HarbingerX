@@ -288,11 +288,20 @@ func (s *Service) executeScan(ctx context.Context, scan *ScanInstance) {
 		s.storage.SaveScanResult(scan.ID, s.resultToMap(result))
 	}
 
-	// Emit completion event
-	runtime.EventsEmit(s.ctx, "scan:complete", map[string]interface{}{
-		"scanId": scan.ID,
-		"result": s.resultToMap(result),
-	})
+	// Emit completion event (only if running in Wails context)
+	if !s.disableEvents {
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					// Ignore runtime context errors when running outside Wails
+				}
+			}()
+			runtime.EventsEmit(s.ctx, "scan:complete", map[string]interface{}{
+				"scanId": scan.ID,
+				"result": s.resultToMap(result),
+			})
+		}()
+	}
 }
 
 func (s *Service) performReconnaissance(ctx context.Context, result *ScanResult) {
