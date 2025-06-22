@@ -11,17 +11,17 @@ const ThreatTrends = () => {
 
   return (
     <div className="space-y-4">
-      <p className="text-text-secondary text-sm">Security score trends over time</p>
+      <p className="text-slate-400 text-sm">Security score trends over time</p>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {mockData.map((item, index) => (
-          <div key={index} className="p-4 rounded-lg bg-white/5 border border-glass-border">
+          <div key={index} className="p-4 rounded-lg bg-white/5 border border-white/10">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-text-secondary">{item.period}</p>
-                <p className="text-xl font-bold text-text-primary">{item.score}/100</p>
+                <p className="text-sm text-slate-400">{item.period}</p>
+                <p className="text-xl font-bold text-white">{item.score}/100</p>
               </div>
               <div className={`flex items-center space-x-1 ${
-                item.trend === 'up' ? 'text-accent-success' : 'text-accent-danger'
+                item.trend === 'up' ? 'text-emerald-400' : 'text-red-400'
               }`}>
                 {item.trend === 'up' ? (
                   <TrendingUp className="w-4 h-4" />

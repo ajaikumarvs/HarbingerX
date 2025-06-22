@@ -11,7 +11,7 @@ import Settings from './pages/Settings'
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gradient-to-br from-bg-primary to-bg-secondary">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         <Layout>
           <Routes>
             <Route path="/" element={<Dashboard />} />
