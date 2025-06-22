@@ -15,7 +15,7 @@ import {
   Star,
   Settings
 } from 'lucide-react'
-// import { GetDashboardStats, GetAllScans } from '../../wailsjs/go/main/App'
+import { GetDashboardStats, GetAllScans } from '../../wailsjs/go/main/App'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -45,41 +45,39 @@ const Dashboard = () => {
   const loadDashboardData = async () => {
     try {
       setLoading(true)
-      // Simulate API calls with mock data for demo
-      const mockStats = {
-        totalScans: 247,
-        completedScans: 231,
-        runningScans: 3,
-        failedScans: 13,
-        averageScore: 78,
-        totalVulns: 45,
-        criticalVulns: 3,
-        highVulns: 12
-      }
       
-      const mockScans = [
-        {
-          id: '1',
-          url: 'https://example.com',
-          status: 'completed',
-          score: 8.5,
-          timestamp: new Date().toISOString(),
-          vulnerabilities: 5
-        },
-        {
-          id: '2',
-          url: 'https://demo.site',
-          status: 'running',
-          score: null,
-          timestamp: new Date().toISOString(),
-          vulnerabilities: null
-        }
-      ]
+      // Load dashboard statistics from backend
+      const dashboardStats = await GetDashboardStats()
+      setStats(dashboardStats)
       
-      setStats(mockStats)
-      setRecentScans(mockScans)
+      // Load recent scans from backend
+      const allScans = await GetAllScans()
+      // Get the 5 most recent scans
+      const recentScansData = allScans.slice(0, 5).map(scan => ({
+        id: scan.id,
+        url: scan.url || scan.target,
+        status: scan.status,
+        score: scan.securityScore,
+        timestamp: scan.timestamp,
+        vulnerabilities: scan.totalVulnerabilities || 0
+      }))
+      
+      setRecentScans(recentScansData)
     } catch (error) {
       console.error('Failed to load dashboard data:', error)
+      // Fallback to mock data on error
+      const mockStats = {
+        totalScans: 0,
+        completedScans: 0,
+        runningScans: 0,
+        failedScans: 0,
+        averageScore: 0,
+        totalVulns: 0,
+        criticalVulns: 0,
+        highVulns: 0
+      }
+      setStats(mockStats)
+      setRecentScans([])
     } finally {
       setLoading(false)
     }
