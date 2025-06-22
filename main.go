@@ -28,6 +28,12 @@ func main() {
 		Bind: []interface{}{
 			app,
 		},
+		// Performance optimizations
+		DisableResize:     false,
+		Fullscreen:        false,
+		WindowStartState:  options.Normal,
+		HideWindowOnClose: false,
+		AlwaysOnTop:       false,
 	})
 
 	if err != nil {

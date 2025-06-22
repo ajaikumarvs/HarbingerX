@@ -86,15 +86,15 @@ module.exports = {
           to: { opacity: "1", transform: "translateY(0)" },
         },
         "crimson-pulse": {
-          "0%, 100%": { boxShadow: "0 0 0 0 hsla(var(--primary), 0.7)" },
-          "70%": { boxShadow: "0 0 0 10px hsla(var(--primary), 0)" },
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.7" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.3s ease-in-out",
-        "crimson-pulse": "crimson-pulse 2s infinite",
+        "crimson-pulse": "crimson-pulse 3s ease-in-out infinite",
       },
       boxShadow: {
         'crimson': '0 0 20px hsla(var(--primary), 0.3)',

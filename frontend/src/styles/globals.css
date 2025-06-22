@@ -174,7 +174,7 @@
 }
 
 .crimson-glow {
-  box-shadow: 0 0 20px hsla(var(--primary), 0.3);
+  box-shadow: 0 0 8px hsla(var(--primary), 0.2);
 }
 
 .crimson-gradient {
@@ -214,4 +214,41 @@
 /* Smooth scrolling behavior */
 html {
   scroll-behavior: smooth;
+}
+
+/* Performance optimizations for WebView */
+* {
+  /* Hardware acceleration for better performance */
+  -webkit-backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+
+/* Optimize animations for better performance */
+*,
+*::before,
+*::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: revert !important;
+    animation-iteration-count: revert !important;
+    transition-duration: revert !important;
+    scroll-behavior: revert !important;
+  }
+}
+
+/* GPU acceleration for key elements */
+.gpu-accelerated {
+  will-change: transform;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
