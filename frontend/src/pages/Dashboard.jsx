@@ -16,6 +16,10 @@ import {
   Settings
 } from 'lucide-react'
 // import { GetDashboardStats, GetAllScans } from '../../wailsjs/go/main/App'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
 import StatCard from '../components/StatCard'
 import RecentScans from '../components/RecentScans'
 import ThreatTrends from '../components/ThreatTrends'
@@ -157,28 +161,27 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 fade-in">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
         <div className="space-y-2">
           <div className="flex items-center space-x-3">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg">
-              <Shield className="w-6 h-6 text-white" />
+            <div className="p-2 rounded-lg bg-primary">
+              <Shield className="w-6 h-6 text-primary-foreground" />
             </div>
-            <h1 className="text-4xl font-bold text-white">Security Dashboard</h1>
+            <h1 className="text-4xl font-bold">Security Dashboard</h1>
           </div>
-          <p className="text-slate-400 text-lg">
+          <p className="text-muted-foreground text-lg">
             Monitor your security posture and recent scanning activity
           </p>
         </div>
-        <Link
-          to="/scan"
-          className="glass-button primary flex items-center space-x-2 text-lg px-6 py-3"
-        >
-          <Search className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-          <span>New Scan</span>
-          <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-        </Link>
+        <Button asChild size="lg">
+          <Link to="/scan" className="gap-2">
+            <Search className="w-5 h-5" />
+            <span>New Scan</span>
+            <ChevronRight className="w-4 h-4" />
+          </Link>
+        </Button>
       </div>
 
       {/* Stats Grid */}
@@ -200,71 +203,75 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         {/* Recent Scans */}
         <div className="xl:col-span-2">
-          <div className="glass-card p-8">
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 rounded-xl bg-purple-500/20 text-purple-400">
-                  <Activity className="w-5 h-5" />
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                    <Activity className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-2xl">Recent Scans</CardTitle>
+                    <CardDescription>Latest security assessments</CardDescription>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-white">Recent Scans</h2>
-                  <p className="text-slate-400">Latest security assessments</p>
-                </div>
+                <Button variant="outline" asChild>
+                  <Link to="/history" className="gap-2">
+                    <span>View all</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </Link>
+                </Button>
               </div>
-              <Link
-                to="/history"
-                className="glass-button flex items-center space-x-2 text-sm px-4 py-2"
-              >
-                <span>View all</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </div>
+            </CardHeader>
             
-            {recentScans.length > 0 ? (
-              <RecentScans scans={recentScans} />
-            ) : (
-              <div className="text-center py-12">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-800 mb-4">
-                  <Search className="w-8 h-8 text-slate-400" />
+            <CardContent>
+              {recentScans.length > 0 ? (
+                <RecentScans scans={recentScans} />
+              ) : (
+                <div className="text-center py-12">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-4">
+                    <Search className="w-8 h-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2">No scans yet</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Start your first security scan to see results here
+                  </p>
+                  <Button asChild>
+                    <Link to="/scan" className="gap-2">
+                      <Search className="w-4 h-4" />
+                      <span>Start Scanning</span>
+                    </Link>
+                  </Button>
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2">No scans yet</h3>
-                <p className="text-slate-400 mb-6">
-                  Start your first security scan to see results here
-                </p>
-                <Link
-                  to="/scan"
-                  className="glass-button primary flex items-center space-x-2"
-                >
-                  <Search className="w-4 h-4" />
-                  <span>Start Scanning</span>
-                </Link>
-              </div>
-            )}
-          </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Quick Actions */}
-          <div className="glass-card p-6">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-400">
-                <Zap className="w-5 h-5" />
+          <Card>
+            <CardHeader>
+              <div className="flex items-center space-x-3">
+                <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                  <Zap className="w-5 h-5" />
+                </div>
+                <div>
+                  <CardTitle>Quick Actions</CardTitle>
+                  <CardDescription>Common tasks</CardDescription>
+                </div>
               </div>
-              <div>
-                <h3 className="text-lg font-bold text-white">Quick Actions</h3>
-                <p className="text-slate-400 text-sm">Common tasks</p>
-              </div>
-            </div>
+            </CardHeader>
             
-            <div className="space-y-3">
+            <CardContent className="space-y-3">
               {quickActions.map((action, index) => {
                 const Icon = action.icon
                 const colorClasses = {
-                  blue: 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30',
-                  purple: 'bg-purple-500/20 text-purple-400 hover:bg-purple-500/30',
-                  green: 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30',
-                  orange: 'bg-orange-500/20 text-orange-400 hover:bg-orange-500/30'
+                  blue: 'bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400',
+                  purple: 'bg-purple-50 text-purple-600 dark:bg-purple-950 dark:text-purple-400',
+                  green: 'bg-green-50 text-green-600 dark:bg-green-950 dark:text-green-400',
+                  orange: 'bg-orange-50 text-orange-600 dark:bg-orange-950 dark:text-orange-400'
                 }
                 
                 return (
@@ -272,66 +279,68 @@ const Dashboard = () => {
                     key={index}
                     to={action.href}
                     className={`
-                      group flex items-center p-4 rounded-xl transition-all duration-200 hover:bg-white/5 border border-transparent hover:border-white/10
-                      ${action.featured ? 'bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-blue-500/20' : ''}
+                      group flex items-center p-3 rounded-lg transition-colors hover:bg-accent
+                      ${action.featured ? 'bg-primary/5 border border-primary/20' : 'border border-transparent'}
                     `}
                   >
                     <div className={`
-                      p-2 rounded-lg mr-4 transition-all duration-200
+                      p-2 rounded-md mr-3
                       ${colorClasses[action.color]}
                     `}>
                       <Icon className="w-4 h-4" />
                     </div>
                     <div className="flex-1">
-                      <p className="font-medium text-white group-hover:text-blue-400 transition-colors">
+                      <p className="font-medium">
                         {action.title}
                       </p>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-muted-foreground">
                         {action.description}
                       </p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-all" />
+                    <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                   </Link>
                 )
               })}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* System Info */}
-          <div className="glass-card p-6">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-400">
-                <Globe className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-white">System Info</h3>
-                <p className="text-slate-400 text-sm">Current status</p>
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-slate-400">Version</span>
-                <span className="text-white font-medium">1.0.0</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-slate-400">Uptime</span>
-                <span className="text-white font-medium">24h 15m</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-slate-400">API Status</span>
-                <div className="flex items-center space-x-2">
-                  <div className="status-dot completed" />
-                  <span className="text-emerald-400 font-medium">Online</span>
+          <Card>
+            <CardHeader>
+              <div className="flex items-center space-x-3">
+                <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                  <Globe className="w-5 h-5" />
+                </div>
+                <div>
+                  <CardTitle>System Info</CardTitle>
+                  <CardDescription>Current status</CardDescription>
                 </div>
               </div>
-              <div className="divider my-4" />
+            </CardHeader>
+            
+            <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-slate-400">Last Scan</span>
-                <span className="text-white font-medium">2 hours ago</span>
+                <span className="text-muted-foreground">Version</span>
+                <span className="font-medium">1.0.0</span>
               </div>
-            </div>
-          </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Uptime</span>
+                <span className="font-medium">24h 15m</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">API Status</span>
+                <div className="flex items-center space-x-2">
+                  <div className="status-dot-success" />
+                  <Badge variant="outline" className="text-green-600">Online</Badge>
+                </div>
+              </div>
+              <Separator />
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Last Scan</span>
+                <span className="font-medium">2 hours ago</span>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

@@ -1,14 +1,16 @@
 import React from 'react'
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 
 const StatCard = ({ title, value, icon: Icon, color, change, trend }) => {
   const getIconClasses = (color) => {
     const colors = {
-      primary: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
-      success: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
-      warning: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
-      danger: 'text-red-400 bg-red-500/10 border-red-500/20',
-      info: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20'
+      primary: 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-950',
+      success: 'text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-950',
+      warning: 'text-yellow-600 bg-yellow-50 dark:text-yellow-400 dark:bg-yellow-950',
+      danger: 'text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-950',
+      info: 'text-cyan-600 bg-cyan-50 dark:text-cyan-400 dark:bg-cyan-950'
     }
     return colors[color] || colors.primary
   }
@@ -24,66 +26,49 @@ const StatCard = ({ title, value, icon: Icon, color, change, trend }) => {
     }
   }
 
-  const getTrendColor = () => {
+  const getTrendVariant = () => {
     switch (trend) {
       case 'up':
-        return 'text-emerald-400 bg-emerald-500/10'
+        return 'default'
       case 'down':
-        return 'text-red-400 bg-red-500/10'
+        return 'destructive'
       default:
-        return 'text-slate-400 bg-slate-500/10'
+        return 'secondary'
     }
   }
 
   return (
-    <div className="glass-card p-6 group cursor-pointer transition-all duration-300 hover:scale-[1.02] animate-fade-in">
-      <div className="space-y-4">
-        {/* Header with icon */}
-        <div className="flex items-center justify-between">
-          <div className={`
-            p-3 rounded-2xl border backdrop-blur-sm
-            ${getIconClasses(color)}
-            group-hover:scale-110 transition-transform duration-300
-          `}>
-            <Icon className="w-5 h-5" />
-          </div>
-          
-          {change !== undefined && change !== 0 && (
-            <div className={`
-              flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium
-              ${getTrendColor()}
-              backdrop-blur-sm border border-white/5
-            `}>
-              {getTrendIcon()}
-              <span>
-                {change > 0 ? '+' : ''}{change}%
-              </span>
-            </div>
-          )}
+    <Card className="hover:shadow-lg transition-shadow duration-200">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <div className={`p-2 rounded-lg ${getIconClasses(color)}`}>
+          <Icon className="w-4 h-4" />
         </div>
-
-        {/* Content */}
-        <div className="space-y-2">
-          <h3 className="text-sm font-medium text-slate-400 uppercase tracking-wider">
+        
+        {change !== undefined && change !== 0 && (
+          <Badge variant={getTrendVariant()} className="gap-1">
+            {getTrendIcon()}
+            <span>{change > 0 ? '+' : ''}{change}%</span>
+          </Badge>
+        )}
+      </CardHeader>
+      
+      <CardContent>
+        <div className="space-y-1">
+          <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
             {title}
-          </h3>
-          <div className="flex items-baseline space-x-2">
-            <p className="text-3xl font-bold text-white group-hover:text-gradient transition-all duration-300">
-              {value}
-            </p>
-          </div>
+          </p>
+          <p className="text-2xl font-bold">
+            {value}
+          </p>
           
           {change !== undefined && change !== 0 && (
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-muted-foreground">
               vs last week
             </p>
           )}
         </div>
-      </div>
-
-      {/* Subtle hover effect */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-    </div>
+      </CardContent>
+    </Card>
   )
 }
 

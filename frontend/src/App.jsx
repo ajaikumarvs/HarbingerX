@@ -11,7 +11,7 @@ import Settings from './pages/Settings'
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <div className="min-h-screen bg-background">
         <Layout>
           <Routes>
             <Route path="/" element={<Dashboard />} />
@@ -27,10 +27,9 @@ function App() {
           toastOptions={{
             duration: 4000,
             style: {
-              background: 'rgba(255, 255, 255, 0.05)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              color: '#f8fafc',
+              background: 'hsl(var(--card))',
+              border: '1px solid hsl(var(--border))',
+              color: 'hsl(var(--card-foreground))',
             },
           }}
         />
