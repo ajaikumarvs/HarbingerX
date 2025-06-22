@@ -11,7 +11,7 @@ import Settings from './pages/Settings'
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-background">
+      <div className="h-screen bg-background overflow-hidden">
         <Layout>
           <Routes>
             <Route path="/" element={<Dashboard />} />
