@@ -6,11 +6,11 @@ import { Badge } from '@/components/ui/badge'
 const StatCard = ({ title, value, icon: Icon, color, change, trend }) => {
   const getIconClasses = (color) => {
     const colors = {
-      primary: 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-950',
-      success: 'text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-950',
-      warning: 'text-yellow-600 bg-yellow-50 dark:text-yellow-400 dark:bg-yellow-950',
-      danger: 'text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-950',
-      info: 'text-cyan-600 bg-cyan-50 dark:text-cyan-400 dark:bg-cyan-950'
+      primary: 'text-primary bg-primary/20 border border-primary/30',
+      success: 'text-green-400 bg-green-500/20 border border-green-500/30',
+      warning: 'text-yellow-400 bg-yellow-500/20 border border-yellow-500/30',
+      danger: 'text-red-400 bg-red-500/20 border border-red-500/30',
+      info: 'text-cyan-400 bg-cyan-500/20 border border-cyan-500/30'
     }
     return colors[color] || colors.primary
   }

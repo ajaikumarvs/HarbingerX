@@ -166,10 +166,12 @@ const Dashboard = () => {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
         <div className="space-y-2">
           <div className="flex items-center space-x-3">
-            <div className="p-2 rounded-lg bg-primary">
+            <div className="p-2 rounded-lg bg-primary crimson-glow">
               <Shield className="w-6 h-6 text-primary-foreground" />
             </div>
-            <h1 className="text-4xl font-bold">Security Dashboard</h1>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-gray-200 to-primary bg-clip-text text-transparent">
+              Security Dashboard
+            </h1>
           </div>
           <p className="text-muted-foreground text-lg">
             Monitor your security posture and recent scanning activity
@@ -207,11 +209,11 @@ const Dashboard = () => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                  <div className="p-2 rounded-lg bg-primary/20 text-primary border border-primary/30">
                     <Activity className="w-5 h-5" />
                   </div>
                   <div>
-                    <CardTitle className="text-2xl">Recent Scans</CardTitle>
+                    <CardTitle className="text-2xl text-foreground">Recent Scans</CardTitle>
                     <CardDescription>Latest security assessments</CardDescription>
                   </div>
                 </div>
@@ -254,11 +256,11 @@ const Dashboard = () => {
           <Card>
             <CardHeader>
               <div className="flex items-center space-x-3">
-                <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                <div className="p-2 rounded-lg bg-primary/20 text-primary border border-primary/30">
                   <Zap className="w-5 h-5" />
                 </div>
                 <div>
-                  <CardTitle>Quick Actions</CardTitle>
+                  <CardTitle className="text-foreground">Quick Actions</CardTitle>
                   <CardDescription>Common tasks</CardDescription>
                 </div>
               </div>
@@ -308,11 +310,11 @@ const Dashboard = () => {
           <Card>
             <CardHeader>
               <div className="flex items-center space-x-3">
-                <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                <div className="p-2 rounded-lg bg-primary/20 text-primary border border-primary/30">
                   <Globe className="w-5 h-5" />
                 </div>
                 <div>
-                  <CardTitle>System Info</CardTitle>
+                  <CardTitle className="text-foreground">System Info</CardTitle>
                   <CardDescription>Current status</CardDescription>
                 </div>
               </div>
@@ -330,8 +332,8 @@ const Dashboard = () => {
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">API Status</span>
                 <div className="flex items-center space-x-2">
-                  <div className="status-dot-success" />
-                  <Badge variant="outline" className="text-green-600">Online</Badge>
+                  <div className="status-dot-crimson animate-crimson-pulse" />
+                  <Badge variant="outline" className="text-primary border-primary/30">Online</Badge>
                 </div>
               </div>
               <Separator />

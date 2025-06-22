@@ -52,6 +52,20 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Crimson color variants
+        crimson: {
+          50: '#fef2f2',
+          100: '#fde8e8',
+          200: '#fbd5d5',
+          300: '#f8b4b4',
+          400: '#f87171',
+          500: 'hsl(var(--primary))', // Main crimson
+          600: '#dc1f2e',
+          700: '#b91c1c',
+          800: '#991b1b',
+          900: '#7f1d1d',
+          950: '#450a0a',
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -67,10 +81,24 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "fade-in": {
+          from: { opacity: "0", transform: "translateY(4px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "crimson-pulse": {
+          "0%, 100%": { boxShadow: "0 0 0 0 hsla(var(--primary), 0.7)" },
+          "70%": { boxShadow: "0 0 0 10px hsla(var(--primary), 0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-in": "fade-in 0.3s ease-in-out",
+        "crimson-pulse": "crimson-pulse 2s infinite",
+      },
+      boxShadow: {
+        'crimson': '0 0 20px hsla(var(--primary), 0.3)',
+        'crimson-lg': '0 0 40px hsla(var(--primary), 0.4)',
       },
     },
   },

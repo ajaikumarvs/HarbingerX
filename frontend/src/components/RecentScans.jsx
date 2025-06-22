@@ -17,11 +17,11 @@ const RecentScans = ({ scans }) => {
   const getStatusIcon = (status) => {
     switch (status) {
       case 'completed':
-        return <CheckCircle className="w-4 h-4 text-green-600" />
+        return <CheckCircle className="w-4 h-4 text-green-400" />
       case 'running':
-        return <Loader className="w-4 h-4 text-blue-600 animate-spin" />
+        return <Loader className="w-4 h-4 text-primary animate-spin" />
       case 'failed':
-        return <AlertTriangle className="w-4 h-4 text-red-600" />
+        return <AlertTriangle className="w-4 h-4 text-red-400" />
       default:
         return <Clock className="w-4 h-4 text-muted-foreground" />
     }
@@ -38,10 +38,10 @@ const RecentScans = ({ scans }) => {
   }
 
   const getScoreColor = (score) => {
-    if (score >= 8) return 'text-green-600'
-    if (score >= 6) return 'text-blue-600'
-    if (score >= 4) return 'text-yellow-600'
-    return 'text-red-600'
+    if (score >= 8) return 'text-green-400'
+    if (score >= 6) return 'text-primary'
+    if (score >= 4) return 'text-yellow-400'
+    return 'text-red-400'
   }
 
   const formatDate = (dateString) => {

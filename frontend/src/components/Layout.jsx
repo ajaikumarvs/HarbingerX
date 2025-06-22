@@ -66,11 +66,11 @@ const Layout = ({ children }) => {
             {/* Logo & Close Button */}
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center space-x-3">
-                <div className="p-2 rounded-lg bg-primary">
-                  <img src={logo} alt="HarbingerX" className="w-6 h-6" />
+                <div className="p-2 rounded-lg bg-primary crimson-glow">
+                  <img src={logo} alt="HarbingerX" className="w-6 h-6 brightness-0 invert" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-foreground">HarbingerX</h1>
+                  <h1 className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">HarbingerX</h1>
                   <p className="text-xs text-muted-foreground">Security Scanner</p>
                 </div>
               </div>
@@ -115,17 +115,17 @@ const Layout = ({ children }) => {
             <Separator className="my-4" />
 
             {/* System Status */}
-            <Card className="bg-muted/50">
+            <Card className="bg-muted/30 border-primary/20">
               <CardContent className="p-4">
                 <div className="flex items-center space-x-3">
                   <div className="relative">
                     <Shield className="w-8 h-8 text-primary" />
-                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full animate-crimson-pulse" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">System Status</p>
                     <div className="flex items-center space-x-2 mt-1">
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge variant="outline" className="text-xs border-primary/30 text-primary">
                         All systems operational
                       </Badge>
                     </div>
@@ -151,10 +151,10 @@ const Layout = ({ children }) => {
             </Button>
             
             <div className="flex items-center space-x-2">
-              <div className="p-1.5 rounded-lg bg-primary">
-                <img src={logo} alt="HarbingerX" className="w-5 h-5" />
+              <div className="p-1.5 rounded-lg bg-primary crimson-glow">
+                <img src={logo} alt="HarbingerX" className="w-5 h-5 brightness-0 invert" />
               </div>
-              <h1 className="text-lg font-bold">HarbingerX</h1>
+              <h1 className="text-lg font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">HarbingerX</h1>
             </div>
             
             <div className="w-10" /> {/* Spacer */}
