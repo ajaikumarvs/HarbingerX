@@ -162,7 +162,7 @@ const Layout = ({ children }) => {
         </div>
 
         {/* Page content */}
-        <main className="flex-1 p-6 overflow-y-auto overflow-x-hidden">
+        <main className="flex-1 p-6 overflow-y-auto overflow-x-hidden scrollbar-hide">
           <div className="max-w-7xl mx-auto h-full">
             {children}
           </div>
