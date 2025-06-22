@@ -39,7 +39,7 @@ func main() {
 
 	// Test 1: Save and test Gemini API key
 	fmt.Println("\n1. Testing API Key Management...")
-	geminiKey := "AIzaSyBzzR2Q7QJV4z0qKHJ8yRwIOXE_DD6OwDE"
+	geminiKey := ""
 
 	fmt.Print("  - Saving Gemini API key via App.SaveAPIKey... ")
 	err := app.SaveAPIKey("gemini", geminiKey)
