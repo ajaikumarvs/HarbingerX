@@ -118,17 +118,15 @@ const Layout = ({ children }) => {
             <Card className="bg-muted/30 border-primary/20">
               <CardContent className="p-4">
                 <div className="flex items-center space-x-3">
-                  <div className="relative">
+                  <div className="relative flex-shrink-0">
                     <Shield className="w-8 h-8 text-primary" />
                     <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full animate-crimson-pulse" />
                   </div>
-                  <div>
-                    <p className="text-sm font-medium">System Status</p>
-                    <div className="flex items-center space-x-2 mt-1">
-                      <Badge variant="outline" className="text-xs border-primary/30 text-primary">
-                        All systems operational
-                      </Badge>
-                    </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground">System Status</p>
+                    <Badge variant="outline" className="text-xs border-primary/30 text-primary mt-0.5">
+                      All systems operational
+                    </Badge>
                   </div>
                 </div>
               </CardContent>
